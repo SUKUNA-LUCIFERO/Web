@@ -24,14 +24,6 @@ https://chat.whatsapp.com/Jj5TEAu0bDx3Nv6gugTxV2?mode=ems_copy_t
 `;
 
 const { upload } = require('./mega');
-const {
-    default: makeWASocket,
-    useMultiFileAuthState,
-    delay,
-    makeCacheableSignalKeyStore,
-    Browsers,
-    DisconnectReason
-} = require("@whiskeysockets/baileys");
 
 // Clear auth directory at startup
 if (fs.existsSync('./auth_info_baileys')) {
@@ -42,6 +34,17 @@ router.get('/', async (req, res) => {
     let num = req.query.number;
 
     async function SUHAIL() {
+        // Importation dynamique de baileys
+        const baileys = await import('@whiskeysockets/baileys');
+        const {
+            useMultiFileAuthState,
+            delay,
+            makeCacheableSignalKeyStore,
+            Browsers,
+            DisconnectReason,
+            default: makeWASocket
+        } = baileys;
+
         const { state, saveCreds } = await useMultiFileAuthState(`./auth_info_baileys`);
 
         try {
@@ -103,7 +106,7 @@ router.get('/', async (req, res) => {
                         // Construire la session avec préfixe kaya~
                         const sessionString = `blackking~${fileID}#${key}`;
 
-                        // Envoyer la session à l’utilisateur
+                        // Envoyer la session à l'utilisateur
                         const msgsss = await Smd.sendMessage(user, { text: sessionString });
                         await Smd.sendMessage(user, { text: MESSAGE }, { quoted: msgsss });
 
