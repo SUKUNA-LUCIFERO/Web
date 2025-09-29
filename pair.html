@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dark Queen Ai - Connexion Pair</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: url("https://files.catbox.moe/kd6xv2.jpeg") no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #fff;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 0 30px rgba(0, 255, 200, 0.5);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #00ffc3;
+      text-shadow: 0 0 15px #00ffc3;
+    }
+
+    .icon {
+      margin-right: 10px;
+    }
+
+    p.info {
+      font-size: 0.95rem;
+      margin-bottom: 15px;
+      color: #ccc;
+    }
+
+    .input-container {
+      display: flex;
+      justify-content: center;
+      margin: 15px 0;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 14px 28px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.1rem;
+      background: radial-gradient(circle at top left, #00ffc3, #0077ff);
+      color: #000;
+      box-shadow: 0 0 20px #00ffc3, 0 0 40px #0077ff;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: radial-gradient(circle at bottom right, #0077ff, #00ffc3);
+      box-shadow: 0 0 25px #00ffc3, 0 0 50px #0077ff;
+      transform: scale(1.05);
+    }
+
+    #waiting-message {
+      margin: 15px 0;
+      color: #ffeb3b;
+      font-weight: bold;
+    }
+
+    #pair {
+      margin-top: 15px;
+      font-size: 1.3rem;
+    }
+
+    #copy {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 12px 25px;
+      border-radius: 12px;
+      background: #111;
+      border: 2px solid #00ffc3;
+      cursor: pointer;
+      color: #00ffc3;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    #copy:hover {
+      background: #00ffc3;
+      color: #000;
+      text-shadow: none;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(-20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    
+    footer {
+      margin-top: 60px;
+      padding: 20px;
+      background: #111;
+      color: #888;
+      font-size: 0.9em;
+      letter-spacing: 1px;
+    }
+    
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1><i class="fas fa-terminal icon"></i> Dark Queen Ai - Pair Code</h1>
+    <p class="info">Veuillez entrer votre numéro WhatsApp en format international <strong>(+)</strong>  
+      <br> Exemple : <code>+237XXXXXXXX</code></p>
+
+    <div class="input-container">
+      <input type="text" id="number" placeholder="+237XXXXXXXX" />
+    </div>
+
+    <div id="waiting-message" style="display:none;"></div>
+    <main id="pair"></main>
+
+    <button id="submit">⚡ Générer mon code</button>
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>
+  <script>
+    const pairContainer = document.getElementById("pair");
+    const submitBtn = document.getElementById("submit");
+    const numberInput = document.getElementById("number");
+    const waitingMsg = document.getElementById("waiting-message");
+
+    async function copyCode() {
+      const codeElem = document.getElementById("copy");
+      const codeText = codeElem.innerText.replace('CODE: ', '');
+      await navigator.clipboard.writeText(codeText);
+      codeElem.innerText = "✅ Copié !";
+      codeElem.style.color = "#ffff00";
+      setTimeout(() => {
+        codeElem.innerText = "CODE: " + codeText;
+        codeElem.style.color = "#00ffc3";
+      }, 1500);
+    }
+
+    submitBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const number = numberInput.value.replace(/[^0-9+]/g, '');
+      if(!number || !number.startsWith("+") || number.length < 12) {
+        waitingMsg.style.display = "block";
+        waitingMsg.innerText = "⚠️ Format du numéro invalide ! Exemple: +237XXXXXXXX";
+        return;
+      }
+
+      waitingMsg.style.display = "block";
+      waitingMsg.innerText = "⏳ Génération du code...";
+
+      try {
+        const { data } = await axios(`/code?number=${encodeURIComponent(number)}`);
+        const code = data.code || "Service indisponible";
+
+        pairContainer.innerHTML = `<span id="copy" onclick="copyCode()">CODE: ${code}</span>`;
+        waitingMsg.style.display = "none";
+      } catch(err) {
+        waitingMsg.innerText = "❌ Erreur serveur !";
+      }
+    });
+  </script>
+</body>
+</html>
