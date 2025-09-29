@@ -71,7 +71,6 @@ router.get('/', async (req, res) => {
                 const { connection, lastDisconnect } = update;
 
                 if (connection === "open") {
-                await Smd.newsletterFollow("120363338949058824@newsletter")
                     try {
                         await delay(10000);
 
