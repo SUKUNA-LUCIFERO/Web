@@ -1,8 +1,8 @@
 const mega = require("megajs");
 
 const auth = {
-    email: 'domkaya4@gmail.com',   //use your real vaild mega account email
-    password: 'devkaya12345668hhhf756',  ////use your real vaild mega account password
+    email: 'mets ton adresse mail',   //use your real vaild mega account email
+    password: 'mais ton mots de passe ',  ////use your real vaild mega account password
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246'
 };
 
